@@ -1,0 +1,293 @@
+cout>> "Ingrese un vector"
+cin<< vector1				(bind ?vector1 (readline))
+cout>> "Ingrese el otro vector"
+cin<< vector2   			(bind ?vector2 (readline))
+					(bind ?cadena(= (str-compare ?vector1 ?vector2) 0))
+					(bind ?unicos (create$))
+					(foreach ?i ?cadena
+						(if(not(member$ ?i ?unicos))
+							(bind ?unicos (insert$ ?i ?unicos))))
+
+
+(deftemplate vectores
+   (slot vector1)
+   (slot vector2)
+   (slot cadena))
+
+(defrule ingresar
+   =>
+   (printout t "Ingrese el primer vector: " crlf)
+   (bind ?vector1 (readline))
+   (printout t "Ingrese el segundo vector: " crlf)
+   (bind ?vector2 (readline))
+   (assert (vectores (vector1 ?vector1) (vector2 ?vector2))))
+
+
+(defrule comparar
+   (vectores (vector1 ?vector1) (vector2 ?vector2))
+   =>
+   (bind ?unicos (create$))
+   (bind ?repetidos (create$))
+   (foreach ?i ?vector1
+      (bind ?cont 0)
+      (if (member$ ?i ?vector2)
+         then
+         (bind ?repetidos (insert$ ?repetidos ?i ?cont ))
+	 (bind ?cont (+ ?cont 1))
+         else
+         (bind ?unicos (insert$ ?unicos ?i ?cont)))))
+         (bind ?cont (+ ?cont 1))
+
+
+(defrule comparar
+   (vectores (vector1 ?vector1) (vector2 ?vector2)) 
+   =>
+   (bind ?unicos (create$))
+   (foreach ?i ?vector1
+      (if (not (member$ ?i ?vector2))
+         then
+         (bind ?unicos append$ ?unicos ?i)))))
+
+(defrule compara
+(vectores (vector1 ?vector1) (vector2 ?vector2)) 
+   =>
+(bind ?lista (append$ ?vector1 =?vector2))
+
+(defrule comparar
+   (vectores (vector1 ?vector1) (vector2 ?vector2)) 
+   =>
+   (bind ?cadena "")
+   (foreach ?cad ?vector1
+      (if (not (member$ ?cad ?cadena))
+         then
+         (bind ?cadena (str-cat ?cadena ?cad))))
+   (foreach ?cad ?vector2
+      (if (not (member$ ?cad ?cadena))
+         then
+         (bind ?cadena (str-cat ?cadena ?cad))))
+   (printout t "Respuesta: " ?cadena crlf))
+
+
+(defrule unir-cadenas
+  (vectores (vector1 ?vector1) (vector2 ?vector2)) 
+   =>
+  (bind ?cadena"")
+  (foreach ?char ?vector1) 
+    (if (not (member$ ?char ?cadena))
+      then
+      (bind ?resultado (str-cat ?cadena ?char))))
+  (foreach ?char ?c2
+    (if (not (member$ ?char ?cadena))
+      then
+      (bind ?resultado (str-cat ?resultado ?char))))
+  (modify (vectores (cadena ?cadena)))
+  (printout t "Cadenas unidas sin elementos repetidos: " ?cadena crlf))
+
+
+
+
+
+
+
+(defrule ingresar
+   =>
+   (printout t "Ingrese el primer vector: " crlf)
+   (bind ?vector1 (readline))
+   (printout t "Ingrese el segundo vector: " crlf)
+   (bind ?vector2 (readline))
+(bind ?cadena (create$ ?vector1 ?vector2))
+
+(bind ?unico (create$))
+(foreach ?ele ?cadena
+   (if (not (member$ ?ele ?unico))
+   then
+   (bind ?unico (create$ ?ele ?unico))))
+(bind ?unico (create$ cadena ?unico))
+(printout t "Respuesta: " ?unico crlf))
+
+
+
+
+
+
+
+
+(defrule procesar-cadenas
+  (cadenas (cadena1 ?cadena1) (cadena2 ?cadena2))
+  =>
+  (bind ?unicos (create$))
+  (bind ?repetidos (create$))
+  (foreach ?char ?cadena1
+    (if (not (member$ ?char ?cadena2))
+      then
+      (if (not (member$ ?char ?unicos))
+        then
+        (bind ?unicos (insert$ ?unicos ?char)))))
+  (foreach ?char ?cadena2
+    (if (not (member$ ?char ?cadena1))
+      then
+      (if (not (member$ ?char ?unicos))
+        then
+        (bind ?unicos (insert$ ?unicos ?char)))
+      else
+        (if (not (member$ ?char ?repetidos))
+          then
+          (bind ?repetidos (insert$ ?repetidos ?char))))))
+  (assert (cadenas (unicos (implode$ ?unicos)) (repetidos (implode$ ?repetidos))))
+  (printout t "Elementos únicos: " (implode$ ?unicos) crlf)
+  (printout t "Elementos repetidos: " (implode$ ?repetidos) crlf))
+
+
+
+
+
+
+
+
+
+
+
+(defrule ingresar
+   =>
+   (printout t "Ingrese el primer vector: " crlf)
+   (bind ?vector1 (readline))
+   (printout t "Ingrese el segundo vector: " crlf)
+   (bind ?vector2 (readline))
+   (bind ?cadena (create$ ?vector1 ?vector2))
+   (bind =count
+   (bind ?unico (create$))
+   (foreach ?ele ?cadena
+      (if (= 1 (count$ ?ele ?cadena))
+         then
+         (if (not (member$ ?ele ?unico))
+            then
+            (bind ?unico (create$ ?ele ?unico))
+         )
+      )
+   )
+   (bind ?unico (create$ ?unico))
+   (printout t "Respuesta: " ?unico crlf)
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+(defrule ingresar
+   =>
+   (printout t "Ingrese el primer vector: " crlf)
+   (bind ?vector1 (readline))
+   (printout t "Ingrese el segundo vector: " crlf)
+   (bind ?vector2 (readline))
+   (bind ?cadena (create$ ?vector1 ?vector2))
+
+   (bind ?unico (create$))
+   (foreach ?ele ?cadena
+      (if (= 1 (length$ (find-all-facts ((?f elemento)) (eq ?f:valor ?ele))))
+         then
+         (if (not (member$ ?ele ?unico))
+            then
+            (bind ?unico (create$ ?ele ?unico))
+         )
+      )
+   )
+   (bind ?unico (create$ ?unico))
+   (printout t "Respuesta: " ?unico crlf)
+)
+
+//////////////////////////////////////////////////////////////////
+(import lista)
+(defrule comparar
+   =>
+   (bind ?vector1 (create$ "cadena B C A D E E B C E"))
+   (bind ?vector2 (create$ "cadena E E B F D E"))
+   (bind ?vector1 (create$ (explode$ ?vector1)))
+   (bind ?vector2 (create$ (explode$ ?vector2)))
+   (bind ?cadena(create$ ?vector1 ?vector2))
+   (bind ?respuesta (create$))
+   (foreach ?ele ?cadena
+      (if (not (member$ ?ele ?respuesta))
+         then
+         (bind ?respuesta(create$ ?ele ?respuesta))
+      )
+   )
+   (bind ?respuesta (create$ ?respuesta))
+   (printout t "Primer Vector: " ?vector1 crlf)
+   (printout t "Segundo vector: " ?vector2 crlf)
+   (printout t "Respuesta: " ?respuesta crlf)
+)
+
+
+(defrule comparar
+   =>
+   (bind ?vector1 (create$ B C A D E E B C E))
+   (bind ?vector2 (create$ E E B F D E))
+   (bind ?cadena (create$ ?vector1 ?vector2))
+   (bind ?respuesta (create$))
+   (foreach ?ele ?cadena
+      (if (not (member$ ?ele ?respuesta))
+         then
+         (bind ?respuesta (create$ ?ele ?respuesta))
+      )
+   )
+   (bind ?respuesta (create$ cadena ?respuesta))
+   (printout t "cadena " ?vector1 crlf)
+   (printout t "cadena " ?vector2 crlf)
+   (printout t "union"?respuesta crlf)
+)
+
+
+
+
+
+*************************************************************************************************
+(defrule comparar
+   =>
+   (printout t "Al ingresar los elementos de cada vector, separelos por comas" crlf)
+   (printout t "Ingrese el primer vector: " crlf)
+   (bind ?vector1 (readline))
+   (printout t "Ingrese el segundo vector: " crlf)
+   (bind ?vector2 (readline))
+   (bind ?vector1 (create$ (explode$ ?vector1)))
+   (bind ?vector2 (create$ (explode$ ?vector2)))
+   (bind ?cadena(create$ ?vector1 ?vector2))
+   (bind ?respuesta (create$))
+   (foreach ?ele ?cadena
+      (if (not (member$ ?ele ?respuesta))
+         then
+         (bind ?respuesta(create$ ?ele ?respuesta))
+      )
+   )
+   (bind ?respuesta (create$ ?respuesta))
+   (printout t "Primer Vector: " ?vector1 crlf)
+   (printout t "Segundo vector: " ?vector2 crlf)
+   (printout t "Respuesta: " ?respuesta crlf)
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
