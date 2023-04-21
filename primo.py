@@ -1,26 +1,4 @@
-import math
-def isPrime(number):
-    # El número 2 es el único número primo par.
-    # Por lo tanto, si el número es 2, se devuelve True.
-    if number == 2:
-        return True
-    # Los números negativos, cero y 1 no son primos.
-    # Además, los números pares diferentes de 2 tampoco son primos.
-    # Por lo tanto, se devuelve False para estos casos.
-    if number <= 1 or (number % 2) == 0:
-        return False
-    # Se verifica si el número es divisible por algún número impar menor a la raíz cuadrada del número.
-    # Si se encuentra algún divisor, entonces el número no es primo y se devuelve False.
-    # Si no se encuentra ningún divisor, entonces el número es primo y se devuelve True.
-    for check in range(3, int(math.sqrt(number))):
-        if (number % check) == 0:
-            return False
-    return True
-
-# Función para verificar si un número es primo (versión optimizada)
-def isPrime2(number):
-    # El número 2 es el único número primo par.
-    # Por lo tanto, si el número es 2, se devuelve True.
+, se devuelve True.
     if number == 2:
         return True
     # Los números negativos, cero y 1 no son primos.
